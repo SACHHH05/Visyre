@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-reanimated'; // Must be first!
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as Font from 'expo-font';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+import SplashScreen from './screens/SplashScreen';
+import HomeScreen from './screens/HO'; // 
+const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      await Font.loadAsync({
+        'BebasNeue-Regular': require('./assets/fonts/BebasNeue-Regular.ttf'),
+      });
+      setFontsLoaded(true);
+    };
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) return null;
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="SplashScreen" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="SplashScreen" component={SplashScreen} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
